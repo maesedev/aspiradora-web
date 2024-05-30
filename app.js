@@ -1,158 +1,113 @@
-"use strict"
+// inicial
+let bodegas = [] 
+let aspiradora = null
+let stop_simulation = false
+let speed = 200 //default
 
-const constans = {
-    block : [10, 10],
-    blockSideSize : 50, //pixels
+// cuando se haga clic en iniciar simulacion
+// espera 1 segundo para iniciarla
+document.getElementById("StartButton").addEventListener("click",()=>setTimeout(()=>main() , 1000))
+
+//cambiar speed (1000 - 9*x)ms
+document.getElementById("speedInput").addEventListener("change",e=> speed = 1000 - 9*parseInt(e.target.value) )
+
+function getRandomState(){
+    arr  = Object.values( new HabitacionState().allStates )
+    let indiceAleatorio = Math.floor(Math.random() * arr.length);
+    return arr[indiceAleatorio];
+}
+
+function Init(){
+    const roomImgUrl = "./media/room.avif"
+    const $hab1 = document.getElementById("Bodega1")
+    const Bodega1 = new Habitacion(1 , 5, 5, $hab1, roomImgUrl )
+    bodegas.push(Bodega1)
+    
+    const $hab2 = document.getElementById("Bodega2")
+    const Bodega2 = new Habitacion(1 , 5, 5, $hab2, roomImgUrl)
+    bodegas.push(Bodega2)
+    
+    const $hab3 = document.getElementById("Bodega3")
+    const Bodega3 = new Habitacion(1 , 5, 5, $hab3, roomImgUrl )
+    bodegas.push(Bodega3)
+    
+    const $hab4 = document.getElementById("Bodega4")
+    const Bodega4 = new Habitacion(1 , 5, 5, $hab4, roomImgUrl)
+    bodegas.push(Bodega4)
+    
+    const aspiradoraImg = "https://static.vecteezy.com/system/resources/previews/014/411/498/original/top-view-robot-vacuum-cleaner-icon-outline-style-vector.jpg" 
+    const $asp = document.getElementById("aspiradora")
+    
+    aspiradora = new Aspiradora("aspiturbo", "Cheap Samsung",aspiradoraImg, $asp , 100 )
+    aspiradora.start()
+
+    Bodega1.state.setState( getRandomState() )
+    Bodega2.state.setState( getRandomState() )
+    Bodega3.state.setState( getRandomState() )
+    Bodega4.state.setState( getRandomState() )
+
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  function updateBodegasStatusLabels(){
+    let $stateSpans= [
+        document.getElementById("Bodega1-state"),
+        document.getElementById("Bodega2-state"),
+        document.getElementById("Bodega3-state"),
+        document.getElementById("Bodega4-state"),
+    ]
+
+    // muestra basura si tiene basura
+    for (let i = 0; i < $stateSpans.length; i++) {
+        $stateSpans[i].textContent = bodegas[i].state.actualState 
+        bodegas[i].showTrashifExists("./media/trash1.webp")
+    }
+}
+  
+function updateAspiradoraStatusLabels(){
+    let $stateSpans= {
+        $marca  : document.getElementById("marcaAspiradoraSpan"),
+        $batery : document.getElementById("bateryAspiradoraSpan"),
+        $state  : document.getElementById("stateAspiradoraSpan"),
+        $x      : document.getElementById("xAspiradoraSpan"),
+        $y      : document.getElementById("yAspiradoraSpan"),
+    }   
+
+    $stateSpans.$marca.textContent = aspiradora.Marca
+    $stateSpans.$batery.textContent = aspiradora.bateria
+    $stateSpans.$state.textContent = aspiradora.state.actualState
+    $stateSpans.$x.textContent = aspiradora.x
+    $stateSpans.$y.textContent = aspiradora.y
+
     
 }
 
 
-class AspiradoraStates{
-    constructor(){
-        this.actualState = null
-        this.States={
-            cleaning: {
-                message: "Limpiando...",
-            },
-            changingRoom:{
-                message:"moviendose de habitacion..."
-            },
-            powerOn:{
-                message:"Iniciando aspiradora..."
-            },
-            
-            powerOff:{
-                message:"Apagando aspiradora..."
-            },
-            lowBattery:{
-                message:"La bateria es baja..."
-            },
-        }
-    }
-
-    setState(newState){
-        this.actualState = newState
-    }
-    getState(){
-        return this.actualState
-    }
+function updateStatusInRooms(){
+    // Hacer que las habitaciones cambien de estado cada que la aspiradora limpie un cuarto
 }
-class Aspiradora{
-    constructor(Id, Marca, spriteImg , nodeHtml, bateriaInicial = 100){
-        //Bateria inicial en el 100% por defecto
-        this.bateria = bateriaInicial;
+
+async function  mainloop(){
+    while(!stop_simulation){
+
+        console.log("loop");
+        updateAspiradoraStatusLabels()
+        updateBodegasStatusLabels()
         
-        this.x = 0
-        this.y = 0
-        this.Id = Id
-        this.Marca = Marca
-        this.state = new AspiradoraStates()
-
-        //set sprite
-        nodeHtml.style.background = `url('${spriteImg}')`
-        nodeHtml.style.backgroundSize = `cover`
-
-        nodeHtml.style.height = constans.blockSideSize * 1.5 + "px" 
-        nodeHtml.style.width = constans.blockSideSize * 1.5  + "px" 
-    }
-
-    //Iniciar los procesos de la aspiradora
-    start(){
-
-    }
-
-    //detener los procesos de la aspiradora
-    stop(){
-
-    }
-
-    //Limpiar la basura que este en una habitacion
-    clean(){
-
-    }
-    goToChargeBase(){
-
-    }
-    turnOn(){
-        
-    }
-    turnOff(){
-        
-    }
-    changeState(){
-
+        await sleep(speed)
     }
 }
 
-class HabitacionState{
-    constructor(){
-        this.actualState = null
-        this.allStates = {
-            clean:"Habitacion limpia",
-            dirty:"Habitacion sucia",
-            occupied:"Habitacion ocupada"            
-        }
-    }
-
-    getState(){
-        return this.actualState
-    }
-    setState(newState){
-        // una habitacion despues de estar ocupada debe quedar sucia
-        if(this.actualState == this.allStates.occupied){
-
-            this.actualState = this.allStates.dirty
-        }else{
-            this.actualState = newState
-        }
-
-    }
-}
-
-class Habitacion{
-    constructor( Id, blocksWidth, blocksHeight , htmlNode , spriteImg ){
-        this.Id = Id
-        this.width = blocksWidth
-        this.height = blocksHeight
-
-
-        //set htmlNode width and height based on the constants
-        htmlNode.style.width = blocksWidth * constans.blockSideSize + "px"
-        htmlNode.style.height = blocksHeight * constans.blockSideSize + "px"
-        
-        //set sprite
-        htmlNode.style.backgroundImage = `url('${spriteImg}')`
-        htmlNode.style.backgroundSize = `cover`
-
-        this.sprite = spriteImg
-        this.htmlNode = htmlNode
-        this.state = new HabitacionState()
-    }
+function cleanHabitacion(HabitacionInstance){
+    HabitacionInstance.state.setState(HabitacionInstance.state.allStates.clean)
 }
 
 
-
-//cuando se limpia una habitacion y hay alguna ocupada pasa a estar sucia y desocupada
-
-
-const roomImgUrl = "https://img.freepik.com/free-vector/top-view-living-room-house_107791-6102.jpg"
-const $hab1 = document.getElementById("Bodega1")
-const Bodega1 = new Habitacion(1 , 5, 5, $hab1, roomImgUrl )
+function main(){
+    Init()
+    mainloop()
 
 
-const $hab2 = document.getElementById("Bodega2")
-const Bodega2 = new Habitacion(1 , 5, 5, $hab2, roomImgUrl)
-
-
-const $hab3 = document.getElementById("Bodega3")
-const Bodega3 = new Habitacion(1 , 5, 5, $hab3, roomImgUrl )
-
-
-const $hab4 = document.getElementById("Bodega4")
-const Bodega4 = new Habitacion(1 , 5, 5, $hab4, roomImgUrl)
-
-
-
-const aspiradoraImg = "https://static.vecteezy.com/system/resources/previews/014/411/498/original/top-view-robot-vacuum-cleaner-icon-outline-style-vector.jpg" 
-const $asp = document.getElementById("aspiradora")
-const aspiradora = new Aspiradora("aspiturbo", "Cheap Samsung",aspiradoraImg, $asp , 100 )
+}

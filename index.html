@@ -6,15 +6,23 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="clases.js"></script>
 
 </head>
 <body>
     <main >
+        <header class="h-20 bg-sky-500 flex justify-center items-center">
+            <div>
+                <label for="speed">Velocidad</label>
+                <input class="w-80" type="range" min="0" max="100" value="50" name="speed" id="speedInput">
+            </div>
+        </header>
+
         <!-- Pantalla Inicial -->
         <section  id="ModalStartSimulation" 
                   class="bottom-0 text-center pt-20 absolute z-[1000] bg-sky-500  text-white h-screen w-screen flex flex-col gap-2 justify-center items-center transition-all duration-1000  ">
             <h1 class="text-8xl font-semibold mb-16 ">Simulacion de aspiradora</h1>  
-            <div id="StartButton" class=" bg-orange-400 select-none active:bg-orange-300 text-white font-medium uppercase text-xl rounded-lg hover:bg-orange-500 w-72 h-20 flex justify-center items-center">
+            <div id="StartButton"  class=" bg-orange-400 select-none active:bg-orange-300 text-white font-medium uppercase text-xl rounded-lg hover:bg-orange-500 w-72 h-20 flex justify-center items-center">
                 Iniciar Simulacion
             </div>
             <div class="mt-8 font-light ">
@@ -25,34 +33,42 @@
         </section>
 
 
-        <section id="BodegasState" class="flex justify-around my-10 px-14">
-            <div>
-                <h3 class="font-bold">Bodega 1</h3>
-                <p>State: {bussy}</p>
+        <section  class="flex flex-col text-center items-center gap-7 h-full ">
+            <div id="BodegasState" class="flex w-full max-w-[1150px] justify-around my-10 ">
+                <div>
+                    <h3 class="font-bold">Bodega 1</h3>
+                    <p>State: <span id="Bodega1-state"></span></p>
+                </div>
+                <div>
+                    <h3 class="font-bold">Bodega 2</h3>
+                    <p>State: <span id="Bodega2-state"></span></p>
+                </div>
+                <div>
+                    <h3 class="font-bold">Bodega 3</h3>
+                    <p>State: <span id="Bodega3-state"></span></p>
+                </div>
+                <div>
+                    <h3 class="font-bold">Bodega 4</h3>
+                    <p>State: <span id="Bodega4-state"></span></p>
+                </div>
             </div>
-            <div>
-                <h3 class="font-bold">Bodega 2</h3>
-                <p>State: {clean}</p>
-            </div>
-            <div>
-                <h3 class="font-bold">Bodega 3</h3>
-                <p>State: {dirty}</p>
-            </div>
-            <div>
-                <h3 class="font-bold">Bodega 4</h3>
-                <p>State: {bussy}</p>
-            </div>
-        </section>
-        <section  class="flex flex-col items-center gap-7 h-full ">
 
             <div class="Bogedas flex gap-10 justify-center w-fit relative mx-auto">
 
-                <div id="aspiradora" class="absolute top-0 left-0 z-50 object-contain"></div>
+                <div id="aspiradora" class=" inChargeBase absolute rounded-full z-50 object-contain"></div>
     
-                <div id="Bodega1" class="bg-slate-400"></div>
-                <div id="Bodega2" class="bg-slate-400"></div>
-                <div id="Bodega3" class="bg-slate-400"></div>
-                <div id="Bodega4" class="bg-slate-400"></div>
+                <div id="Bodega1" class="bg-slate-400">
+                    <img class="trash-img" >
+                </div>
+                <div id="Bodega2" class="bg-slate-400">
+                    <img class="trash-img" >
+                </div>
+                <div id="Bodega3" class="bg-slate-400">
+                    <img class="trash-img" >
+                </div>
+                <div id="Bodega4" class="bg-slate-400">
+                    <img class="trash-img" >
+                </div>
             </div>
 
             <div class="flex items-center justify-center p-5 h-28 w-42 bg-green-400 rounded-2xl">Base de carga <span class="inline-block text-2xl" >⚡</span></div>
@@ -60,11 +76,11 @@
         <section class="flex flex-col items-center">
             <h1 class="font-bold text-xl">Informacion Aspiradora</h1>
             <div>
-                <p><b>Marca:</b><span id="marcaAspiradoraSpan">{Marca}</span></p>
-                <p><b>Bateria: </b> <span id="bateryAspiradoraSpan">50</span>%</p>
-                <p><b>State: </b> <span id="stateAspiradoraSpan">{cleaning}</span> </p>
-                <p><b>x: </b><span id="xAspiradoraSpan">0</span></p>
-                <p><b>y: </b><span id="yAspiradoraSpan">0</span></p>
+                <p><b>Marca:</b><span id="marcaAspiradoraSpan"></span></p>
+                <p><b>Bateria: </b> <span id="bateryAspiradoraSpan"></span>%</p>
+                <p><b>State: </b> <span id="stateAspiradoraSpan"></span> </p>
+                <p><b>x: </b><span id="xAspiradoraSpan"></span></p>
+                <p><b>y: </b><span id="yAspiradoraSpan"></span></p>
             </div>
         </section>
     </main>
