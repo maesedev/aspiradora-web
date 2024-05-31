@@ -12,6 +12,8 @@ class AspiradoraStates{
         this.States={
             standby:"esperando instrucciones...",
             cleaning: "Limpiando...",
+            searchingTrash: "Buscando basura...",
+            trashFond: "Basura encontrada",
             goingToChargeBase: "Dirigiendose a la base de carga...",
             changingRoom:"moviendose de habitacion...",
             powerOn:"Iniciando aspiradora...",
@@ -99,7 +101,10 @@ class Aspiradora{
         this.currentRoom = null
         this.state.setState(new AspiradoraStates().States.goingToChargeBase)
         
-        this.addBatery(100)
+        setTimeout(()=>{
+            this.addBatery(100)
+        },1000)
+
 
         this.x = 0
         this.y = 0

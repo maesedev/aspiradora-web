@@ -193,10 +193,15 @@ async function mainloop(){
             const goToRoomResponse = aspiradora.goToRoom(habitacion)
 
             await sleep(loopSpeed)
-
+            
             if(goToRoomResponse){
+                aspiradora.state.setState(new AspiradoraStates().States.searchingTrash)
+                await sleep(loopSpeed)
+                aspiradora.state.setState(new AspiradoraStates().States.trashFond)
+                await sleep(loopSpeed)
                 updateStatusInRooms()
                 aspiradora.cleanRoom()
+                await sleep(loopSpeed)
             }
 
 
