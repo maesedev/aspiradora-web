@@ -15,12 +15,5 @@
 }
 
 #aspiradora{
-  transition: all 2s ease-in;
-
-}
-
-.inChargeBase{
-  bottom: -121px;
-  top: unset;
-  left: 46.5%;
+  translate:  0 0;
 }

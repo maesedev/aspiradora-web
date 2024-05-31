@@ -3,7 +3,6 @@
 const constans = {
     block : [10, 10],
     blockSideSize : 50, //pixels
-    
 }
 
 
@@ -11,28 +10,13 @@ class AspiradoraStates{
     constructor(){
         this.actualState = null
         this.States={
-            standby:{
-                message: "esperando instrucciones..."
-            },
-            cleaning: {
-                message: "Limpiando...",
-            },
-            goingToChargeBase: {
-                message: "Dirigiendose a la base de carga...",
-            },
-            changingRoom:{
-                message:"moviendose de habitacion..."
-            },
-            powerOn:{
-                message:"Iniciando aspiradora..."
-            },
-            
-            powerOff:{
-                message:"Aspiradora apagada"
-            },
-            lowBattery:{
-                message:"La bateria es baja..."
-            },
+            standby:"esperando instrucciones...",
+            cleaning: "Limpiando...",
+            goingToChargeBase: "Dirigiendose a la base de carga...",
+            changingRoom:"moviendose de habitacion...",
+            powerOn:"Iniciando aspiradora...",
+            powerOff:"Aspiradora apagada",
+            lowBattery:"La bateria es baja..."
         }
     }
 
@@ -55,6 +39,8 @@ class Aspiradora{
         this.state = new AspiradoraStates()
         this.currentRoom = null
 
+        // coordenadas de la base de carga
+        this.chargeBase = [null, null]
         this.nodeHtml = nodeHtml
         //set sprite
         nodeHtml.style.background = `url('${spriteImg}')`
@@ -71,45 +57,49 @@ class Aspiradora{
 
     goToRoom(Habitacion){
 
+        //Si la habitacion esta ocupada, devuelve false
         if( Habitacion.state.actualState ==  new HabitacionState().allStates.occupied){
-            
             return false 
         }
-
-        this.bateria -= 5
+        this.reduceBatery(5)
 
         this.currentRoom = Habitacion
-        this.state.setState(this.state.States.changingRoom.message)
+        this.state.setState(this.state.States.changingRoom)
 
-        let x = Habitacion.htmlNode.getBoundingClientRect().x + 40
-        let y = 120
+        const RoomX = this.currentRoom.htmlNode.getBoundingClientRect().x
+        const HalfRoomWidth = this.currentRoom.htmlNode.clientWidth / 2
+        const HalfAspiradoraWidth = this.nodeHtml.clientWidth / 2
+        const aspiradoraX = this.nodeHtml.getBoundingClientRect().x
+        // posicionar la aspiradora exactamente en el centro (en el eje x) de la habitacion
 
+        let x = (RoomX + HalfRoomWidth) - HalfAspiradoraWidth - this.chargeBase[0]
+        let y = -180
 
+        this.x = x
+        this.y = -180 
         this.nodeHtml.classList.remove("inChargeBase")
 
-        this.nodeHtml.style.left = x + "px"
-        this.nodeHtml.style.top = y + "px"
+        this.nodeHtml.style.translate = `${x}px ${y}px`
 
         return true
 
     }   
 
-    goToChargeBase(){
-        this.state.setState(new AspiradoraStates().States.goingToChargeBase)
-        this.nodeHtml.classList.add("inChargeBase")
-        this.nodeHtml.style.left = ""
-        this.nodeHtml.style.top = ""
 
-        let intervalo = setInterval(() => {
-            this.bateria += 1
-            if(this.bateria >= 5){
-                clearInterval(intervalo)
-            }
-        }, 200);
+    goToChargeBase(){
+        this.reduceBatery()
+        this.currentRoom = null
+        this.state.setState(new AspiradoraStates().States.goingToChargeBase)
+        
+        this.x = 0
+        this.y = 0
+        this.nodeHtml.style.translate = "0 0"
+        
     }   
 
     //detener los procesos de la aspiradora
     stop(){
+        this.currentRoom = null
         this.goToChargeBase()
         setTimeout( ()=>{
             this.state.setState(new AspiradoraStates().States.powerOff)
@@ -118,14 +108,37 @@ class Aspiradora{
     
     //Limpiar la basura que este en una habitacion
     clean(){
-        this.bateria -= 20
-        this.state.setState(new AspiradoraStates().States.cleaning.message)
+        this.reduceBatery(5)
+        this.state.setState(new AspiradoraStates().States.cleaning)
         this.currentRoom.state.setState(this.currentRoom.state.allStates.clean)
     }
 
-    goToChargeBase(){
+    reduceBatery(cant){
+        let final = this.bateria - cant 
+        let intervalo = setInterval(() => {
+            this.bateria -= 1
 
+            if(this.bateria <= 0) 
+                this.bateria = 0
+            if(this.bateria == final){
+                clearInterval(intervalo)
+            }
+
+        }, 200);
     }
+
+    addBatery(cant){
+        let final = this.bateria + cant
+        let intervalo = setInterval(() => {
+            this.bateria += 1
+            
+            if(this.bateria == final || this.bateria == 100){
+                clearInterval(intervalo)
+            }
+
+        }, 200);
+    }
+
     turnOn(){
         
     }
