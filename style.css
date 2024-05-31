@@ -12,6 +12,7 @@
   height: 70px;
   margin: 80px auto;
   margin-top: 120px;
+  filter: brightness(1);
 }
 
 #aspiradora{
