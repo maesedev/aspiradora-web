@@ -143,6 +143,11 @@ function CountDirtyRooms(){
     return habitaciones.filter(habitacion => habitacion.state.actualState == new HabitacionState().allStates.dirty ).length
 }
 
+function CountOccupiedRooms(){
+    return habitaciones.filter(habitacion => habitacion.state.actualState == new HabitacionState().allStates.occupied ).length
+}
+
+
 async function mainloop(){
     
     let updateAspiradoraStatusLabelsInterval = setInterval( ()=>{
@@ -153,12 +158,17 @@ async function mainloop(){
     while(!stop_simulation){
         //console.log("loop");
 
+        if(CountDirtyRooms() + CountOccupiedRooms == 0){
+            stop_simulation=true
+            alert("Simulacion completada: Todas las habitaciones estan limpias")
+        }
         
-        if(aspiradora.state.actualState == new AspiradoraStates().States.charging && aspiradora.bateria < 100   ){
+        if((aspiradora.state.actualState == new AspiradoraStates().States.charging || aspiradora.state.actualState == new AspiradoraStates().States.goingToChargeBase ) && aspiradora.bateria < 100   ){
             await sleep(50)
             updateAspiradoraStatusLabels()
             continue
         }
+        
         
         await sleep(loopSpeed)
 

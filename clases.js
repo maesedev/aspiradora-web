@@ -150,9 +150,9 @@ class Aspiradora{
 
     addBatery(cant){
 
-        this.state.setState(new AspiradoraStates().States.charging)
         let final = this.bateria + cant
-
+        
+        this.state.setState(new AspiradoraStates().States.charging)
         let intervalo = setInterval(() => {
             this.bateria += 1
 
@@ -160,8 +160,11 @@ class Aspiradora{
             if(this.bateria == final || this.bateria > 99){
                 clearInterval(intervalo)
             }
+            if(this.bateria>100){
+                this.bateria=100
 
-        }, 1000/cant);
+            }
+        }, 1000 / (cant / 3) );
     }
 
     turnOn(){
